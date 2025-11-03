@@ -7,7 +7,7 @@
   const tmpl=(html)=>{const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild};
   const params=()=>Object.fromEntries(new URLSearchParams(location.search));
   const setText=(sel,txt)=>{const el=qs(sel);if(el) el.textContent=txt};
-  const mountInView=()=>{const els=qsa('.fade-up'); if(!('IntersectionObserver'in window)){els.forEach(e=>e.classList.add('in-view'));return;} const io=new IntersectionObserver(es=>es.forEach(x=>x.isIntersecting&&x.target.classList.add('in-view')),{threshold:.15}); els.forEach(el=>io.observe(el));};
+  const mountInView=()=>{const els=qsa('.fade-up'); if(!('IntersectionObserver'in window)){els.forEach(e=>e.classList.add('in-view'));return;} const io=new IntersectionObserver(es=>es.forEach(x=>x.isIntersecting&&x.target.classList.add('in-view')),{threshold:.01, rootMargin:'0px 0px -10% 0px'}); els.forEach(el=>{const r=el.getBoundingClientRect(); if(r.top<window.innerHeight*0.9) el.classList.add('in-view'); io.observe(el);});};
 
   const PRODUCTS=[
     {id:'p1',name:'Aurora Headphones',price:12999,category:'Audio',rating:4.7,img:'A',desc:'Immersive over‑ear with spatial audio.'},
@@ -44,8 +44,13 @@
   const validate={ required:v=>Boolean(String(v||'').trim()), email:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v||''), zip:v=>/^[0-9A-Za-z\-\s]{3,10}$/.test(v||''), cardLuhn:(v='')=>{v=v.replace(/\D/g,'');let s=0,d=false;for(let i=v.length-1;i>=0;i--){let n=+v[i]; if(d){n*=2;if(n>9)n-=9} s+=n; d=!d;} return v.length>=13&&s%10===0}, cvv:v=>/^\d{3,4}$/.test(v||'') };
   const initCheckout=()=>{const root=qs('#checkout'); if(!root) return; const fill=()=>{const t=totals(); setText('#sum-subtotal',money(t.subtotal)); setText('#sum-shipping',money(t.shipping)); setText('#sum-tax',money(t.tax)); setText('#sum-total',money(t.total));}; const show=(n)=>{qsa('[data-step]').forEach(s=>s.classList.add('hidden')); const a=qs(`[data-step="${n}"]`); a&&a.classList.remove('hidden'); setText('#step-label', n.charAt(0).toUpperCase()+n.slice(1));}; fill(); show('shipping'); const fd=(f)=>Object.fromEntries(new FormData(qs(f)).entries()); const validShip=(d)=>validate.required(d.fullname)&&validate.email(d.email)&&validate.required(d.address)&&validate.required(d.city)&&validate.zip(d.zip); const validPay=(d)=>validate.cardLuhn(d.card)&&/^\d{2}\/\d{2}$/.test(d.exp||'')&&validate.cvv(d.cvv); const brand=(c='')=>{const v=String(c).replace(/\D/g,''); if(/^4/.test(v))return'Visa'; if(/^5[1-5]/.test(v))return'Mastercard'; if(/^3[47]/.test(v))return'AmEx'; return'Card'}; on('click',qs('#to-payment'),()=>{const d=fd('#shipping-form'); if(!validShip(d)){alert('Please complete shipping details correctly.');return;} show('payment')}); on('click',qs('#back-shipping'),()=>show('shipping')); on('click',qs('#to-review'),()=>{const p=fd('#payment-form'); if(!validPay(p)){alert('Please check card details.'); return;} const s=fd('#shipping-form'); setText('#review-name', s.fullname||''); setText('#review-email', s.email||''); setText('#review-card', `${brand(p.card)} •••• ${String(p.card||'').replace(/\D/g,'').slice(-4)}`); fill(); show('review')}); on('click',qs('#back-payment'),()=>show('payment')); on('click',qs('#place-order'),()=>{alert('Order placed!'); storage.set('cart',[]); location.href='index.html'}); };
 
-  const boot=()=>{mountInView(); updateBadge(); renderFeatured(); bindPLP(); initPDP(); initCart(); initCheckout(); const y=qs('#year'); if(y) y.textContent=new Date().getFullYear(); };
-  document.addEventListener('DOMContentLoaded', boot);
+  const boot=()=>{updateBadge(); renderFeatured(); bindPLP(); initPDP(); initCart(); initCheckout(); mountInView(); const y=qs('#year'); if(y) y.textContent=new Date().getFullYear(); };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    // If the fallback loads after DOMContentLoaded, run immediately
+    boot();
+  }
 
   window.ZC={initPDP,initCart,initCheckout};
 })();

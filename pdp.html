@@ -47,30 +47,6 @@
     </div>
   </footer>
 
-  <script>
-    (async () => {
-      try {
-        const { initApp } = await import('./assets/js/app.js');
-        const { params, qs, on } = await import('./assets/js/utils.js');
-        const { getProductById } = await import('./assets/js/products.js');
-        const { addItem } = await import('./assets/js/cart.js');
-        initApp();
-        const { id } = params();
-        const p = getProductById(id);
-        if (!p) { document.querySelector('main').innerHTML = '<p>Product not found.</p>'; }
-        else {
-          qs('#name').textContent = p.name; qs('#bc-name').textContent = p.name;
-          qs('#desc').textContent = p.desc; qs('#cat').textContent = p.category;
-          qs('#rate').textContent = `★ ${p.rating}`; qs('#price').textContent = `$${(p.price/100).toFixed(2)}`;
-          qs('#img').innerHTML = `<div class=\"thumb\" style=\"aspect-ratio:4/3\"><svg viewBox='0 0 160 120' xmlns='http://www.w3.org/2000/svg'><rect width='100%' height='100%' rx='16' fill='#111829'/><text x='50%' y='56%' dominant-baseline='middle' text-anchor='middle' fill='#e9eef7' font-weight='700' font-size='42'>${p.img}</text></svg></div>`;
-          const q = qs('#qty'); on('click', qs('#inc'), () => q.value = String((Number(q.value)||1)+1));
-          on('click', qs('#dec'), () => q.value = String(Math.max(1,(Number(q.value)||1)-1)));
-          on('click', qs('#add'), () => { addItem(p.id, Number(q.value)||1, p.price, p.name); location.href='cart.html'; });
-        }
-      } catch (e) {
-        var s=document.createElement('script'); s.src='assets/js/bundle.js'; s.onload=()=>window.ZC&&window.ZC.initPDP&&window.ZC.initPDP(); document.head.appendChild(s);
-      }
-    })();
-  </script>
+  <script src="assets/js/bundle.js" defer></script>
 </body>
 </html>
