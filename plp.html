@@ -39,11 +39,17 @@
     </div>
   </footer>
 
-  <script type="module">
-    import { initApp } from './assets/js/app.js';
-    import { qs, on } from './assets/js/utils.js';
-    on('click', qs('#clear'), () => { const s=qs('#search'); s.value=''; s.dispatchEvent(new Event('input')); });
-    initApp();
+  <script>
+    (async () => {
+      try {
+        const { initApp } = await import('./assets/js/app.js');
+        const { qs, on } = await import('./assets/js/utils.js');
+        on('click', qs('#clear'), () => { const s=qs('#search'); s.value=''; s.dispatchEvent(new Event('input')); });
+        initApp();
+      } catch (e) {
+        var s=document.createElement('script'); s.src='assets/js/bundle.js'; document.head.appendChild(s);
+      }
+    })();
   </script>
 </body>
 </html>
