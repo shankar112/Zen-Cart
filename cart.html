@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Your Cart — ZenCart</title>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="logo"></span> ZenCart</a>
+      <nav class="row">
+        <a class="link" href="plp.html">Shop</a>
+        <a class="cart-pill" href="cart.html">Cart <span id="cart-count" class="pill-badge">0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="mt-2">Your Cart</h1>
+    <div class="grid cols-2">
+      <section>
+        <table class="table w-100" id="cart-table">
+          <thead>
+            <tr><th>Item</th><th>Qty</th><th class="text-right">Price</th><th></th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </section>
+      <aside class="glass" style="padding:16px;height:max-content">
+        <h3 class="mb-0">Order Summary</h3>
+        <div class="row between mt-1"><span class="muted">Subtotal</span><strong id="s-sub">$0.00</strong></div>
+        <div class="row between mt-1"><span class="muted">Shipping</span><strong id="s-ship">$0.00</strong></div>
+        <div class="row between mt-1"><span class="muted">Tax</span><strong id="s-tax">$0.00</strong></div>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:12px 0"/>
+        <div class="row between"><span>Total</span><strong id="s-total">$0.00</strong></div>
+        <a class="btn primary w-100 mt-2" href="checkout.html">Checkout</a>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container row between">
+      <span class="muted">Need help? support@zencart</span>
+      <a class="link" href="index.html">Continue Shopping</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initApp } from './assets/js/app.js';
+    import { qs, tmpl } from './assets/js/utils.js';
+    import { getCart, hydrateCartPrices, computeTotals, lineTotal, updateQty, removeItem } from './assets/js/cart.js';
+    import { getProductById } from './assets/js/products.js';
+
+    initApp();
+    const tbody = qs('#rows');
+    const fmt = (n)=>`$${(n/100).toFixed(2)}`;
+
+    const render = () => {
+      hydrateCartPrices((id)=>{ const p = getProductById(id); return p?{price:p.price,name:p.name}:null; });
+      const cart = getCart();
+      tbody.innerHTML = cart.length?'':'<tr><td colspan="4" class="muted">Your cart is empty.</td></tr>';
+      cart.forEach(i => {
+        const row = tmpl(`<tr>
+          <td>${i.name||i.id}</td>
+          <td>
+            <div class="qty">
+              <button data-dec data-id="${i.id}">−</button>
+              <input data-qinp="${i.id}" value="${i.qty}"/>
+              <button data-inc data-id="${i.id}">+</button>
+            </div>
+          </td>
+          <td class="text-right">${fmt(lineTotal(i))}</td>
+          <td class="text-right"><button class="btn ghost" data-remove data-id="${i.id}">Remove</button></td>
+        </tr>`);
+        tbody.appendChild(row);
+      });
+      const t = computeTotals();
+      qs('#s-sub').textContent = fmt(t.subtotal);
+      qs('#s-ship').textContent = fmt(t.shipping);
+      qs('#s-tax').textContent = fmt(t.tax);
+      qs('#s-total').textContent = fmt(t.total);
+    };
+
+    tbody.addEventListener('click',(e)=>{
+      const dec = e.target.closest('[data-dec]');
+      const inc = e.target.closest('[data-inc]');
+      const rm  = e.target.closest('[data-remove]');
+      if (dec||inc) {
+        const id=(dec||inc).dataset.id; const input=qs(`input[data-qinp="${id}"]`);
+        const cur = Number(input.value)||1; const next = inc?cur+1:Math.max(1,cur-1);
+        input.value = next; updateQty(id,next); render(); return;
+      }
+      if (rm) { removeItem(rm.dataset.id); render(); }
+    });
+
+    tbody.addEventListener('input',(e)=>{
+      const inp = e.target.closest('input[data-qinp]'); if (!inp) return;
+      const id = inp.dataset.qinp; const val = Math.max(1, Number(inp.value)||1); inp.value = val; updateQty(id,val); render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

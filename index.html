@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>ZenCart — Modern E-commerce</title>
+  <meta name="description" content="ZenCart: beautifully minimal shopping experience with modern UI."/>
+  <meta property="og:title" content="ZenCart"/>
+  <meta property="og:description" content="Beautifully minimal shopping experience."/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><linearGradient id='g' x1='0' x2='1'><stop stop-color='%236ea8fe'/><stop offset='1' stop-color='%23a16efc'/></linearGradient><rect rx='12' width='64' height='64' fill='%23111829'/><path d='M12 36h22l-18 16h34v-6H32l18-16H12z' fill='url(%23g)'/></svg>">
+  <link rel="stylesheet" href="assets/css/base.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="logo"></span> ZenCart</a>
+      <nav class="row">
+        <a class="link" href="plp.html">Shop</a>
+        <a class="link" href="#features">Features</a>
+        <a class="cart-pill" href="cart.html">Cart <span id="cart-count" class="pill-badge">0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="fade-up">
+        <h1>Shop gear that feels future‑ready</h1>
+        <p>Minimal UI. Fast interactions. Smooth animations. The way online shopping should feel.</p>
+        <div class="cta">
+          <a class="btn primary" href="plp.html">Browse Products</a>
+          <a class="btn ghost" href="#features">Learn More</a>
+        </div>
+      </div>
+      <div class="glass shine fade-up center" style="min-height:220px;border-radius:20px">
+        <div class="text-center">
+          <span class="badge">New</span>
+          <h3 class="mt-1 mb-0">Spring Collection</h3>
+          <p class="muted mt-1">Handpicked tech for everyday joy</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Featured</h2>
+      <div id="featured" class="grid cols-4"></div>
+    </section>
+
+    <section id="features">
+      <h2 class="section-title">Why ZenCart</h2>
+      <div class="grid cols-3">
+        <div class="glass fade-up" style="padding:16px">
+          <h3 class="mb-0">Instant</h3>
+          <p class="muted">Fast loads, no bloat. Built with vanilla JS modules.</p>
+        </div>
+        <div class="glass fade-up" style="padding:16px">
+          <h3 class="mb-0">Elegant</h3>
+          <p class="muted">Clean typography, soft glass surfaces, gentle motion.</p>
+        </div>
+        <div class="glass fade-up" style="padding:16px">
+          <h3 class="mb-0">Reliable</h3>
+          <p class="muted">Cart persists locally and checkout validates your input.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container row between">
+      <span class="muted">© <span id="year"></span> ZenCart</span>
+      <a class="link" href="checkout.html">Checkout</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import './assets/js/app.js';
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

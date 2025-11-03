@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Product — ZenCart</title>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="logo"></span> ZenCart</a>
+      <nav class="row">
+        <a class="link" href="plp.html">Shop</a>
+        <a class="cart-pill" href="cart.html">Cart <span id="cart-count" class="pill-badge">0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="breadcrumb mt-2"><a href="plp.html">Shop</a>  <span id="bc-name">Product</span></div>
+    <section class="grid cols-2">
+      <div id="img" class="glass shine" style="min-height:280px"></div>
+      <div>
+        <h1 id="name">Product</h1>
+        <p id="desc" class="muted"></p>
+        <div class="row mt-1"><span id="cat" class="chip"></span><span id="rate" class="rating"></span></div>
+        <div class="row between mt-2">
+          <span id="price" class="price"></span>
+          <div class="qty">
+            <button id="dec">−</button>
+            <input id="qty" value="1" inputmode="numeric"/>
+            <button id="inc">+</button>
+          </div>
+        </div>
+        <div class="mt-2">
+          <button id="add" class="btn primary">Add to cart</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container row between">
+      <span class="muted">30‑day returns</span>
+      <a class="link" href="cart.html">View Cart</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { params, qs, on } from './assets/js/utils.js';
+    import { getProductById } from './assets/js/products.js';
+    import { addItem } from './assets/js/cart.js';
+    import { initApp } from './assets/js/app.js';
+
+    initApp();
+    const { id } = params();
+    const p = getProductById(id);
+    if (!p) { document.querySelector('main').innerHTML = '<p>Product not found.</p>'; }
+    else {
+      qs('#name').textContent = p.name;
+      qs('#bc-name').textContent = p.name;
+      qs('#desc').textContent = p.desc;
+      qs('#cat').textContent = p.category;
+      qs('#rate').textContent = `★ ${p.rating}`;
+      qs('#price').textContent = `$${(p.price/100).toFixed(2)}`;
+      qs('#img').innerHTML = `<div class="thumb" style="aspect-ratio:4/3">${`<svg viewBox='0 0 160 120' xmlns='http://www.w3.org/2000/svg'><rect width='100%' height='100%' rx='16' fill='#111829'/><text x='50%' y='56%' dominant-baseline='middle' text-anchor='middle' fill='#e9eef7' font-weight='700' font-size='42'>${p.img}</text></svg>`}</div>`;
+      const q = qs('#qty');
+      on('click', qs('#inc'), () => q.value = String((Number(q.value)||1)+1));
+      on('click', qs('#dec'), () => q.value = String(Math.max(1,(Number(q.value)||1)-1)));
+      on('click', qs('#add'), () => { addItem(p.id, Number(q.value)||1, p.price, p.name); location.href='cart.html'; });
+    }
+  </script>
+</body>
+</html>

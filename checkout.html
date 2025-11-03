@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Checkout — ZenCart</title>
+  <link rel="stylesheet" href="assets/css/base.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="logo"></span> ZenCart</a>
+      <nav class="row">
+        <span class="badge">Step: <span id="step-label">Shipping</span></span>
+        <a class="cart-pill" href="cart.html">Cart <span id="cart-count" class="pill-badge">0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" id="checkout">
+    <div class="grid cols-2 mt-2">
+      <section class="glass" style="padding:16px">
+        <div data-step="shipping">
+          <h2 class="mb-0">Shipping</h2>
+          <form id="shipping-form" class="mt-1">
+            <label>Full Name<input name="fullname" required/></label>
+            <label>Email<input name="email" type="email" required/></label>
+            <label>Address<input name="address" required/></label>
+            <label>City<input name="city" required/></label>
+            <label>ZIP<input name="zip" required/></label>
+          </form>
+          <div class="row between mt-2">
+            <a class="btn ghost" href="cart.html">Back to cart</a>
+            <button class="btn primary" id="to-payment">Continue</button>
+          </div>
+        </div>
+
+        <div class="hidden" data-step="payment">
+          <h2 class="mb-0">Payment</h2>
+          <form id="payment-form" class="mt-1">
+            <label>Card Number<input name="card" inputmode="numeric" placeholder="4242 4242 4242 4242" required/></label>
+            <label>Expiry (MM/YY)<input name="exp" placeholder="12/29" required/></label>
+            <label>CVV<input name="cvv" inputmode="numeric" placeholder="123" required/></label>
+          </form>
+          <div class="row between mt-2">
+            <button class="btn ghost" id="back-shipping">Back</button>
+            <button class="btn primary" id="to-review">Review</button>
+          </div>
+        </div>
+
+        <div class="hidden" data-step="review">
+          <h2 class="mb-0">Review</h2>
+          <div class="mt-1">
+            <div class="row between"><span class="muted">Name</span><strong id="review-name"></strong></div>
+            <div class="row between mt-1"><span class="muted">Email</span><strong id="review-email"></strong></div>
+            <div class="row between mt-1"><span class="muted">Payment</span><strong id="review-card"></strong></div>
+          </div>
+          <div class="row between mt-2">
+            <button class="btn ghost" id="back-payment">Back</button>
+            <button class="btn primary" id="place-order">Place Order</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="glass" style="padding:16px;height:max-content">
+        <h3 class="mb-0">Summary</h3>
+        <div class="row between mt-1"><span class="muted">Subtotal</span><strong id="sum-subtotal">$0.00</strong></div>
+        <div class="row between mt-1"><span class="muted">Shipping</span><strong id="sum-shipping">$0.00</strong></div>
+        <div class="row between mt-1"><span class="muted">Tax</span><strong id="sum-tax">$0.00</strong></div>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.08);margin:12px 0"/>
+        <div class="row between"><span>Total</span><strong id="sum-total">$0.00</strong></div>
+        <p class="helper mt-1">Orders ship within 24 hours.</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container row between">
+      <span class="muted">Secure checkout</span>
+      <a class="link" href="index.html">Home</a>
+    </div>
+  </footer>
+
+  <script type="module">
+    import './assets/js/app.js';
+    import './assets/js/forms.js';
+  </script>
+</body>
+</html>
