@@ -4,6 +4,8 @@
 body{font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,sans-serif;color:var(--text);background:radial-gradient(1200px 600px at 80% -10%,#1a2240,transparent),radial-gradient(1000px 600px at -10% 0,#19202f,transparent),var(--bg);min-height:100svh}
 img{max-width:100%;height:auto;display:block}
 a{color:inherit;text-decoration:none}
+/* Focus ring (keyboard) */
+:focus-visible{outline:3px solid var(--brand); outline-offset:3px; border-radius:12px}
 
 /* Layout */
 .container{width:100%;max-width:var(--max);padding:0 20px;margin:0 auto}
@@ -33,11 +35,14 @@ a{color:inherit;text-decoration:none}
 .btn:hover{transform:translateY(-2px)}
 .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#0b0f14}
 .btn.ghost{background:rgba(255,255,255,.04)}
-.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:var(--shadow)}
+.glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 
 /* Cards */
-.card{position:relative;overflow:hidden}
+.card{position:relative;overflow:hidden;z-index:1;transition:transform .2s ease,box-shadow .2s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 38px rgba(0,0,0,.35)}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 38px rgba(0,0,0,.35)}
 .card .thumb{aspect-ratio:4/3;border-bottom:1px solid rgba(255,255,255,.06);background:linear-gradient(135deg,#1e2740,#1a2032)}
+.card .thumb{pointer-events:none}
 .card .content{padding:12px}
 .price{font-weight:700}
 .muted{color:var(--muted)}
@@ -72,7 +77,13 @@ section{padding:40px 0}
 .fade-up{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
 .in-view{opacity:1;transform:none}
 .shine{position:relative;overflow:hidden}
-.shine::after{content:"";position:absolute;inset:-50%;background:conic-gradient(from 220deg at 50% 50%,transparent 0 30%,rgba(255,255,255,.04) 40% 60%,transparent 70% 100%);animation:spin 9s linear infinite}
+.shine{position:relative}
+.shine::after{content:"";position:absolute;inset:-50%;background:conic-gradient(from 220deg at 50% 50%,transparent 0 30%,rgba(255,255,255,.04) 40% 60%,transparent 70% 100%);animation:spin 9s linear infinite;pointer-events:none;z-index:0}
+.card .content{position:relative;z-index:1}
+.card a,.card button{position:relative;z-index:2}
+.btn{cursor:pointer;position:relative}
+.btn::after{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(255,255,255,.06);opacity:0;transition:opacity .2s}
+.btn:active::after{opacity:1}
 @keyframes spin{to{transform:rotate(1turn)}}
 
 /* Utilities */
@@ -96,3 +107,12 @@ section{padding:40px 0}
 /* Breadcrumbs */
 .breadcrumb{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px}
 .breadcrumb a{color:var(--text)}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(10px);background:linear-gradient(135deg,rgba(110,168,254,.2),rgba(161,110,252,.2));border:1px solid rgba(255,255,255,.15);padding:10px 14px;border-radius:12px;color:var(--text);opacity:0;transition:opacity .2s ease,transform .2s ease;backdrop-filter:blur(6px);z-index:9999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Screen reader only */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Skip link */
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{left:16px;top:16px;width:auto;height:auto;z-index:10000;background:#0f1522;color:var(--text);padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15)}

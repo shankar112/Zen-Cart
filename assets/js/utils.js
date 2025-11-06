@@ -22,10 +22,17 @@ export const uid = () => Math.random().toString(36).slice(2,9);
 
 export const mountInView = (root = document) => {
   const els = qsa('.fade-up', root);
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('in-view')); return;
+  }
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => e.isIntersecting && e.target.classList.add('in-view'));
-  }, { threshold:.15 });
-  els.forEach(el => io.observe(el));
+  }, { threshold:.01, rootMargin:'0px 0px -10% 0px' });
+  els.forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight * 0.9) el.classList.add('in-view');
+    io.observe(el);
+  });
 };
 
 export const setText = (sel, txt) => { const el = qs(sel); if (el) el.textContent = txt; };

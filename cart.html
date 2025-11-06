@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="assets/css/base.css"/>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
   <header class="header">
     <div class="container nav">
       <a class="brand" href="index.html"><span class="logo"></span> ZenCart</a>
@@ -17,7 +18,7 @@
     </div>
   </header>
 
-  <main class="container">
+  <main id="main" class="container" tabindex="-1">
     <h1 class="mt-2">Your Cart</h1>
     <div class="grid cols-2">
       <section>
@@ -47,60 +48,61 @@
     </div>
   </footer>
 
-  <script type="module">
-    import { initApp } from './assets/js/app.js';
-    import { qs, tmpl } from './assets/js/utils.js';
-    import { getCart, hydrateCartPrices, computeTotals, lineTotal, updateQty, removeItem } from './assets/js/cart.js';
-    import { getProductById } from './assets/js/products.js';
-
-    initApp();
-    const tbody = qs('#rows');
-    const fmt = (n)=>`$${(n/100).toFixed(2)}`;
-
-    const render = () => {
-      hydrateCartPrices((id)=>{ const p = getProductById(id); return p?{price:p.price,name:p.name}:null; });
-      const cart = getCart();
-      tbody.innerHTML = cart.length?'':'<tr><td colspan="4" class="muted">Your cart is empty.</td></tr>';
-      cart.forEach(i => {
-        const row = tmpl(`<tr>
-          <td>${i.name||i.id}</td>
-          <td>
-            <div class="qty">
-              <button data-dec data-id="${i.id}">−</button>
-              <input data-qinp="${i.id}" value="${i.qty}"/>
-              <button data-inc data-id="${i.id}">+</button>
-            </div>
-          </td>
-          <td class="text-right">${fmt(lineTotal(i))}</td>
-          <td class="text-right"><button class="btn ghost" data-remove data-id="${i.id}">Remove</button></td>
-        </tr>`);
-        tbody.appendChild(row);
-      });
-      const t = computeTotals();
-      qs('#s-sub').textContent = fmt(t.subtotal);
-      qs('#s-ship').textContent = fmt(t.shipping);
-      qs('#s-tax').textContent = fmt(t.tax);
-      qs('#s-total').textContent = fmt(t.total);
-    };
-
-    tbody.addEventListener('click',(e)=>{
-      const dec = e.target.closest('[data-dec]');
-      const inc = e.target.closest('[data-inc]');
-      const rm  = e.target.closest('[data-remove]');
-      if (dec||inc) {
-        const id=(dec||inc).dataset.id; const input=qs(`input[data-qinp="${id}"]`);
-        const cur = Number(input.value)||1; const next = inc?cur+1:Math.max(1,cur-1);
-        input.value = next; updateQty(id,next); render(); return;
+  <script>
+    (async () => {
+      try {
+        const { initApp } = await import('./assets/js/app.js');
+        const { qs, tmpl } = await import('./assets/js/utils.js');
+        const { getCart, hydrateCartPrices, computeTotals, lineTotal, updateQty, removeItem } = await import('./assets/js/cart.js');
+        const { getProductById } = await import('./assets/js/products.js');
+        initApp();
+        const tbody = qs('#rows');
+        const fmt = (n)=>`$${(n/100).toFixed(2)}`;
+        const render = () => {
+          hydrateCartPrices((id)=>{ const p = getProductById(id); return p?{price:p.price,name:p.name}:null; });
+          const cart = getCart();
+          tbody.innerHTML = cart.length?'':'<tr><td colspan="4" class="muted">Your cart is empty.</td></tr>';
+          cart.forEach(i => {
+            const row = tmpl(`<tr>
+              <td>${i.name||i.id}</td>
+              <td>
+                <div class="qty">
+                  <button data-dec data-id="${i.id}">−</button>
+                  <input data-qinp="${i.id}" value="${i.qty}"/>
+                  <button data-inc data-id="${i.id}">+</button>
+                </div>
+              </td>
+              <td class="text-right">${fmt(lineTotal(i))}</td>
+              <td class="text-right"><button class="btn ghost" data-remove data-id="${i.id}">Remove</button></td>
+            </tr>`);
+            tbody.appendChild(row);
+          });
+          const t = computeTotals();
+          qs('#s-sub').textContent = fmt(t.subtotal);
+          qs('#s-ship').textContent = fmt(t.shipping);
+          qs('#s-tax').textContent = fmt(t.tax);
+          qs('#s-total').textContent = fmt(t.total);
+        };
+        tbody.addEventListener('click',(e)=>{
+          const dec = e.target.closest('[data-dec]');
+          const inc = e.target.closest('[data-inc]');
+          const rm  = e.target.closest('[data-remove]');
+          if (dec||inc) {
+            const id=(dec||inc).dataset.id; const input=qs(`input[data-qinp="${id}"]`);
+            const cur = Number(input.value)||1; const next = inc?cur+1:Math.max(1,cur-1);
+            input.value = next; updateQty(id,next); render(); return;
+          }
+          if (rm) { removeItem(rm.dataset.id); render(); }
+        });
+        tbody.addEventListener('input',(e)=>{
+          const inp = e.target.closest('input[data-qinp]'); if (!inp) return;
+          const id = inp.dataset.qinp; const val = Math.max(1, Number(inp.value)||1); inp.value = val; updateQty(id,val); render();
+        });
+        render();
+      } catch (e) {
+        var s=document.createElement('script'); s.src='assets/js/bundle.js'; s.onload=()=>window.ZC&&window.ZC.initCart&&window.ZC.initCart(); document.head.appendChild(s);
       }
-      if (rm) { removeItem(rm.dataset.id); render(); }
-    });
-
-    tbody.addEventListener('input',(e)=>{
-      const inp = e.target.closest('input[data-qinp]'); if (!inp) return;
-      const id = inp.dataset.qinp; const val = Math.max(1, Number(inp.value)||1); inp.value = val; updateQty(id,val); render();
-    });
-
-    render();
+    })();
   </script>
 </body>
 </html>

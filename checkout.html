@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="assets/css/base.css"/>
 </head>
 <body>
+  <a href="#checkout" class="skip-link">Skip to content</a>
   <header class="header">
     <div class="container nav">
       <a class="brand" href="index.html"><span class="logo"></span> ZenCart</a>
@@ -81,9 +82,11 @@
     </div>
   </footer>
 
-  <script type="module">
-    import './assets/js/app.js';
-    import './assets/js/forms.js';
+  <script>
+    (async () => {
+      try { await import('./assets/js/app.js'); await import('./assets/js/forms.js'); }
+      catch (e) { var s=document.createElement('script'); s.src='assets/js/bundle.js'; document.head.appendChild(s); }
+    })();
   </script>
 </body>
 </html>

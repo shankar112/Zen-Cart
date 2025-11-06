@@ -30,10 +30,11 @@ const bindPLP = () => {
 };
 
 export const initApp = () => {
-  mountInView();
   updateCartBadge();
   renderFeatured();
   bindPLP();
+  // Observe after dynamic content is injected
+  mountInView();
 };
 
 document.addEventListener('DOMContentLoaded', initApp);
